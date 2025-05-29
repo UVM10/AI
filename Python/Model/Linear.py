@@ -1,5 +1,4 @@
 import csv
-import matplotlib as plt
 
 X = []
 Y = []
@@ -7,7 +6,7 @@ data_point = 0
 token = 0
 
 def Data_Csv_Read():
-    with open('D:\Python_and_ML\EDABK\docs\LiR_Housing.csv', mode = 'r', newline='', encoding='utf-8') as file:
+    with open('D:\QAC\AI\EDABK\docs\LiR_Housing.csv', mode = 'r', newline='', encoding='utf-8') as file:
         global X, Y, data_point, token
         reader = csv.reader(file)
         header = next(reader)
@@ -72,3 +71,11 @@ def Linear_Regression():
 Data_Csv_Read()
 W = Linear_Regression()
 print(W)
+
+
+
+x_test = [1, 10000, 4, 4, 4, 1, 1, 1, 1, 1, 3, 0, 0.5]
+y_test = 0
+for i in range(13):
+    y_test += W[i][0]*x_test[i]    
+print(y_test)
