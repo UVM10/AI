@@ -171,15 +171,15 @@ bool Csv_Write(FILE **data_csv_write_io, FILE **data_csv_write_nor,Dataset *data
     fclose(*data_csv_write_io);
     return true;
 }
+// Read output and model's parameter for backpropagation
+bool Csv_Read_Back(FILE **data_csv_read_back, Dataset *dataset){}
+// Set a new layer
+bool Data_Layer_Set(Dataset *layer){}
+// Free data
+bool Data_Free(Dataset *dataset){}
 // Split data for Cross Validation
 bool Data_Split(Dataset *original, Dataset *train, Dataset *test, float ratio){}
 // Shuffle data for Cross Validation
 bool Data_Shuffle(Dataset *dataset){}
 // Mormalize input data
 bool Data_Normalize(Dataset *dataset){}
-// Free data
-bool Data_Free(Dataset *dataset){}
-// Read output and model's parameter for backpropagation
-bool Csv_Read_Back(FILE **data_csv_read_back, Dataset *dataset){}
-// Set a new layer
-bool Data_Layer_Set(Dataset *layer){}
