@@ -136,7 +136,7 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
     return true;    
 }
 // Write output and model's parameter
-bool Csv_Write(FILE **data_csv_write_io, FILE **data_csv_write_nor,Dataset *dataset)
+bool Csv_Write(FILE **data_csv_write_io ,Dataset *dataset)
 {
     int i, j, k, m;
 
@@ -172,11 +172,62 @@ bool Csv_Write(FILE **data_csv_write_io, FILE **data_csv_write_nor,Dataset *data
     return true;
 }
 // Read output and model's parameter for backpropagation
-bool Csv_Read_Back(FILE **data_csv_read_back, Dataset *dataset){}
+bool Csv_Read_Bpg(FILE **data_csv_read_back, Dataset *dataset){}
 // Set a new layer
 bool Data_Layer_Set(Dataset *layer){}
 // Free data
-bool Data_Free(Dataset *dataset){}
+bool Data_Free(Dataset *dataset)
+{
+    int i, j;
+
+    for(i = 0; i < dataset->data_count; i++)
+    {
+        free(dataset->X[i]);
+        dataset->X[i] = NULL;
+
+        free(dataset->Y[i]);
+        dataset->Y[i] = NULL;
+
+        free(dataset->X_nor[i]);
+        dataset->X_nor[i] = NULL;
+
+        free(dataset->Y_pre[i]);
+        dataset->Y_pre[i] = NULL;
+
+        free(dataset->W[i]);
+        dataset->W[i] = NULL;
+    }
+    free(dataset->X);
+    dataset->X = NULL;
+    free(dataset->X_nor);
+    dataset->X_nor = NULL;
+    free(dataset->Y);
+    dataset->Y = NULL;
+    free(dataset->Y_pre);
+    dataset->Y_pre = NULL;
+    free(dataset->W);
+    dataset->W = NULL;
+    free(dataset->layer_next);
+    dataset->layer_next = NULL;
+    free(dataset->layer_back);
+    dataset->layer_back = NULL;
+    free(dataset->B);
+    dataset->B = NULL;
+    free(dataset);
+    dataset = NULL;
+}
+// Free Calculation
+bool Calculation_Free(double ***matrix, int row, int collumn)
+{
+    int i;
+
+    for(i = 0; i < row; i++)
+    {
+        free(*matrix[i]);
+        *matrix[i] = NULL;
+    }
+    *matrix = NULL;
+}
 // Split data for Cross Validation
 bool Data_Split(Dataset *original, Dataset *train, Dataset *test, float ratio){}
 // Shuffle data for Cross Validation

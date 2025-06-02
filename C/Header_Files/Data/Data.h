@@ -15,11 +15,13 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset);
 // Write output and model's parameter
 bool Csv_Write(FILE **data_csv_write, Dataset *dataset);
 // Read output and model's parameter for backpropagation
-bool Csv_Read_Back(FILE **data_csv_read_back, Dataset *dataset);
+bool Csv_Read_Bpg(FILE **data_csv_read_back, Dataset *dataset);
 // Set a new layer
 bool Data_Layer_Set(Dataset *layer);
-// Free data
+// Free data 
 bool Data_Free(Dataset *dataset);
+// Free Calculation
+bool Calculation_Free(double ***matrix);
 // Split data for Cross Validation
 bool Data_Split(Dataset *original, Dataset *train, Dataset *test, float ratio);
 // Shuffle data for Cross Validation

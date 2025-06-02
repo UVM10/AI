@@ -20,7 +20,7 @@ void Matrix_Rank();
 // Moore-Penrose inverse of a matrix
 void Matrix_Pinv();
 // Hadamard of 2 matrices
-void Matrix_Hada();
+double **Matrix_Hada();
 // Mutiply a matrix with a number
 void Matrix_Scale(double ***A, int row, int collumn, double num);
 // Dot product of a matrix

@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../Data/Data.h"
 #include "Calculus.h"
 
 // Mutiply 2 matrices
@@ -41,7 +40,8 @@ double **Matrix_Multi(double ***A, double ***B, int row_a, int same_size, int co
     return matrix_multi;
 }
 // Inverse a mmatrix using LU/Cholesky	
-double **Matrix_Inverse(double ***A, int row_size, int column_size) {
+double **Matrix_Inverse(double ***A, int row_size, int column_size) 
+{
     int n = row_size;
     if (n != column_size) return NULL; // Không phải ma trận vuông
 
