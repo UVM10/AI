@@ -6,8 +6,8 @@
 
 typedef struct
 {
-    float **X, **X_nor, **W, **Y, **Y_pre, *B;
-    unsigned int features_count, data_count, layer_dim, layer_next_dim;
+    double **X, **X_nor, **W, **Y, **Y_pre, *B;
+    unsigned int layer_dim, data_count, layer_next_dim;
     struct Dataset *layer_next, *layer_back;
 }Dataset;
 // Read training data

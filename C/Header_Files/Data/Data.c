@@ -4,16 +4,16 @@
 #include <stdbool.h>
 #include "Data.h"
 // Read training data 
-bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
+bool Csv_Read(FILE **data_csv_read, Dataset *dataset, int result_collumn)
 {
     // variable initialization
     char buffer_line[300], *token;
     int i, token_count;
-    float **temp_x, **temp_y;
+    double **temp_x, **temp_y;
     unsigned int first_data_count;
 
     // Assign 
-    dataset->features_count = 0;
+    dataset->layer_dim = 0;
     dataset->data_count = 0;
     first_data_count = 600;
     token_count = 0;
@@ -36,11 +36,11 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
         }
     }
 
-    dataset->features_count = token_count - dataset->layer_dim;
+    dataset->layer_dim = token_count - result_collumn;
 
 
     // allocation
-    temp_x = malloc(first_data_count * sizeof(float *));
+    temp_x = malloc(first_data_count * sizeof(double *));
     if (!temp_x) 
     {
         fclose(*data_csv_read);
@@ -48,7 +48,7 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
     }
     for (i = 0; i < first_data_count; i++)
     {
-        temp_x[i] = malloc(dataset->features_count * sizeof(float));
+        temp_x[i] = malloc(dataset->layer_dim * sizeof(double));
         if (!temp_x[i]) 
         {
             fclose(*data_csv_read);
@@ -56,7 +56,7 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
         }
     }
 
-    temp_y = malloc(first_data_count * sizeof(float *));
+    temp_y = malloc(first_data_count * sizeof(double *));
     if (!temp_y) 
     {
         fclose(*data_csv_read);
@@ -64,7 +64,7 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
     }
     for (i = 0; i < first_data_count; i++)
     {
-        temp_y[i] = malloc(dataset->layer_dim * sizeof(float));
+        temp_y[i] = malloc(sizeof(double));
         if (!temp_y[i]) 
         {
             fclose(*data_csv_read);
@@ -77,12 +77,10 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
     {
         buffer_line[strcspn(buffer_line, '\r\n')] = '\0';
         token = strtok(buffer_line, ",");
+
+        temp_y[dataset->data_count][0] = atof(token);
+    
         for(i = 0; i < dataset->layer_dim; i++)
-        {
-            temp_y[dataset->data_count][i] = atof(token);
-            token = strtok(NULL, ",");
-        }
-        for(i = 0; i < dataset->features_count; i++)
         {
             temp_x[dataset->data_count][i] = atof(token);
             token = strtok(NULL, ",");
@@ -94,8 +92,8 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
         if (dataset->data_count >= first_data_count)
         {
             first_data_count += 300;
-            dataset->X = realloc(temp_x, first_data_count * sizeof(float *));
-            dataset->Y = realloc(temp_y, first_data_count * sizeof(float *));
+            dataset->X = realloc(temp_x, first_data_count * sizeof(double *));
+            dataset->Y = realloc(temp_y, first_data_count * sizeof(double *));
 
             if (!(dataset->X) || !(dataset->Y))
             {
@@ -108,14 +106,14 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
 
             for (i = dataset->data_count - 1; i < first_data_count; i++)
             {
-                temp_x[i] = malloc(dataset->features_count * sizeof(float));
+                temp_x[i] = malloc(dataset->layer_dim * sizeof(double));
                 if (!temp_x[i]) 
                 {
                     fclose(*data_csv_read);
                     return false;
                 }
 
-                temp_y[i] = malloc(dataset->layer_dim * sizeof(float));
+                temp_y[i] = malloc(sizeof(double));
                 if (!temp_y[i]) 
                 {
                     fclose(*data_csv_read);
@@ -128,8 +126,8 @@ bool Csv_Read(FILE **data_csv_read, Dataset *dataset)
     }
 
     // Assign  
-    dataset->X = realloc(temp_x, dataset->data_count * sizeof(float *));
-    dataset->Y = realloc(temp_y, dataset->data_count * sizeof(float *));
+    dataset->X = realloc(temp_x, dataset->data_count * sizeof(double *));
+    dataset->Y = realloc(temp_y, dataset->data_count * sizeof(double *));
 
     fclose(*data_csv_read);
 
@@ -144,15 +142,12 @@ bool Csv_Write(FILE **data_csv_write_io ,Dataset *dataset)
 
     for(i = 0; i < dataset->data_count; i++)
     {
-        for(k = 0; k < dataset->layer_dim; k++)
-        {
-            fprintf(*data_csv_write_io,"%0.6f",dataset->Y[i][k]);
-            if (k != dataset->layer_dim - 1) fprintf(*data_csv_write_io, ",");
-        }
-        for(j = 0; j < dataset->features_count; j++)
+        fprintf(*data_csv_write_io,"%0.6f,",dataset->Y[i][0]);
+
+        for(j = 0; j < dataset->layer_dim; j++)
         {
             fprintf(*data_csv_write_io,"%0.6f",dataset->X[i][j]);
-            if (j != dataset->features_count - 1) fprintf(*data_csv_write_io, ",");
+            if (j != dataset->layer_dim - 1) fprintf(*data_csv_write_io, ",");
         }
         fprintf(*data_csv_write_io,"\n");
     }
@@ -193,10 +188,14 @@ bool Data_Free(Dataset *dataset)
 
         free(dataset->Y_pre[i]);
         dataset->Y_pre[i] = NULL;
-
-        free(dataset->W[i]);
-        dataset->W[i] = NULL;
     }
+
+    for(j = 0; j < dataset->layer_next_dim; j++)
+    {
+        free(dataset->W[j]);
+        dataset->W[j] = NULL;
+    }
+
     free(dataset->X);
     dataset->X = NULL;
     free(dataset->X_nor);
